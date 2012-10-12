@@ -425,7 +425,7 @@ public class SolarCalculatorAppGUI extends javax.swing.JFrame {
     
     //Buttons Event Handling
     private void jButtonReportMouseClicked(java.awt.event.MouseEvent evt) {
-        AppServlet sendStuff = new AppServlet();
+        GuiTalker sendStuff = new GuiTalker();
         try {
 			sendStuff.getServletConnection();
 		} catch (IOException e) {
