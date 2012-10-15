@@ -4,7 +4,10 @@
  */
 package solarCalculatorApp;
 
-import java.io.IOException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -63,7 +66,7 @@ public class SolarCalculatorAppGUI extends javax.swing.JFrame {
 
         jLabel1.setText("Select Panel");
 
-        jComboBoxPanelBrand.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBoxPanelBrand.setModel(new javax.swing.DefaultComboBoxModel());
         jComboBoxPanelBrand.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 jComboBoxPanelBrandFocusGained(evt);
@@ -75,7 +78,7 @@ public class SolarCalculatorAppGUI extends javax.swing.JFrame {
 
         jLabel2.setText("Select Inverter");
 
-        jComboBoxInverterBrand.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBoxInverterBrand.setModel(new javax.swing.DefaultComboBoxModel());
         jComboBoxInverterBrand.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 jComboBoxInverterBrandFocusGained(evt);
@@ -106,7 +109,7 @@ public class SolarCalculatorAppGUI extends javax.swing.JFrame {
 
         jLabel4.setText("Select Energy Provider");
 
-        jComboBoxEnergyProvider.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBoxEnergyProvider.setModel(new javax.swing.DefaultComboBoxModel());
         jComboBoxEnergyProvider.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 jComboBoxEnergyProviderFocusGained(evt);
@@ -115,8 +118,35 @@ public class SolarCalculatorAppGUI extends javax.swing.JFrame {
                 jComboBoxEnergyProviderFocusLost(evt);
             }
         });
+        
+        jComboBoxInverterBrand.addActionListener(new ActionListener () {
+ 			@Override
+ 			public void actionPerformed(ActionEvent e) {
+ 				GuiTalker asd = new GuiTalker();
+ 				ArrayList<String> temp = asd.inverterBrandModels.get(jComboBoxInverterBrand.getSelectedItem().toString());
+ 				jComboBoxInverterModel.removeAllItems();
+ 				for (int i=0 ; i<temp.size() ; i++) {
+ 					jComboBoxInverterModel.addItem(temp.get(i).toString());
+ 				}
+ 				
+ 			}
+         });
+        
+        jComboBoxPanelBrand.addActionListener(new ActionListener () {
+ 			@Override
+ 			public void actionPerformed(ActionEvent e) {
+ 				GuiTalker asd = new GuiTalker();
+ 				ArrayList<String> temp = asd.panelBrandModels.get(jComboBoxPanelBrand.getSelectedItem().toString());
+ 				jComboBoxPanelModel.removeAllItems();
+ 				for (int i=0 ; i<temp.size() ; i++) {
+ 					System.out.println(temp.get(i).toString());
+ 					jComboBoxPanelModel.addItem(temp.get(i).toString());
+ 				}
+ 				
+ 			}
+         });
 
-        jComboBoxPanelModel.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBoxPanelModel.setModel(new javax.swing.DefaultComboBoxModel());
         jComboBoxPanelModel.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 jComboBoxPanelModelFocusGained(evt);
@@ -126,7 +156,7 @@ public class SolarCalculatorAppGUI extends javax.swing.JFrame {
             }
         });
 
-        jComboBoxInverterModel.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBoxInverterModel.setModel(new javax.swing.DefaultComboBoxModel());
         jComboBoxInverterModel.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 jComboBoxInverterModelFocusGained(evt);
@@ -136,6 +166,10 @@ public class SolarCalculatorAppGUI extends javax.swing.JFrame {
             }
         });
 
+    	
+    	GuiTalker sendStuff = new GuiTalker();
+    	populateList(sendStuff.getPopData());
+        
         jLabel5.setText("Tilt Angle");
 
         jTextFieldTilt.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -426,13 +460,38 @@ public class SolarCalculatorAppGUI extends javax.swing.JFrame {
     //Buttons Event Handling
     private void jButtonReportMouseClicked(java.awt.event.MouseEvent evt) {
         GuiTalker sendStuff = new GuiTalker();
-        try {
-			sendStuff.getServletConnection();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
+        //HashMap<String, ArrayList<String>> dataOut = sendStuff.getPopData();
+        //sendStuff.sendCalcData();
+    	
+    	String sendToServerValues = "?";
+    	sendToServerValues += "panelNum=" + jComboBoxPanelModel.getSelectedItem().toString() + "&";
+    	sendToServerValues += "numPanel=" + jTextFieldNumPanels.getText() + "&";
+    	sendToServerValues += "postcode=" + jTextFieldPostcode.getText() + "&";
+    	sendToServerValues += "invNum=" + jComboBoxInverterModel.getSelectedItem().toString() + "&";
+    	sendToServerValues += "energyComp=" + jComboBoxEnergyProvider.getSelectedItem().toString() + "&";
+    	sendToServerValues += "dailyUsage=" + jTextFieldDailyUsage.getText() + "&";
+    	sendToServerValues += "tilt=" + jTextFieldTilt.getText() + "&";
+    	sendToServerValues += "orientation=" + jTextFieldOrientation.getText() + "&";
+    	sendToServerValues += "initInstalCost=" + jTextFieldInstallCost.getText();
+        sendStuff.sendCalcData(sendToServerValues);
+    }
+    
+    private void populateList(HashMap<String, ArrayList<String>> data) { 
+    	ArrayList<String> inverterBrand = data.get("Inverter Brand");
+    	for (int i=0 ; i<inverterBrand.size(); i++) {
+    		jComboBoxInverterBrand.addItem(inverterBrand.get(i));
+    	}
+    	
+    	ArrayList<String> inverterModel = data.get("Panel Brand");
+    	for (int i=0 ; i<inverterModel.size(); i++) {
+    		jComboBoxPanelBrand.addItem(inverterModel.get(i));
+    	}
+    	
+    	ArrayList<String> energyProv = data.get("Energy");
+    	for (int i=0 ; i<energyProv.size(); i++) {
+    		jComboBoxEnergyProvider.addItem(energyProv.get(i));
+    	}
+
     }
 
     /**
@@ -444,6 +503,8 @@ public class SolarCalculatorAppGUI extends javax.swing.JFrame {
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
+
+    	
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
