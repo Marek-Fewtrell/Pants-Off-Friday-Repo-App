@@ -139,7 +139,6 @@ public class SolarCalculatorAppGUI extends javax.swing.JFrame {
  				ArrayList<String> temp = asd.panelBrandModels.get(jComboBoxPanelBrand.getSelectedItem().toString());
  				jComboBoxPanelModel.removeAllItems();
  				for (int i=0 ; i<temp.size() ; i++) {
- 					System.out.println(temp.get(i).toString());
  					jComboBoxPanelModel.addItem(temp.get(i).toString());
  				}
  				

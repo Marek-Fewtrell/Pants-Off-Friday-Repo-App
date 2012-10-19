@@ -44,8 +44,6 @@ public class GuiTalker {
 	
 	//this gets the data to populate the lists.
 	public HashMap<String, ArrayList<String>> getPopData() {
-		
-		//ArrayList<String> inverterModel= new ArrayList<String>();
 		try {
 			String connectURL = urlToServer + urlToPopulate;
 			URL urlpath = getSerlvetConnection(connectURL);
@@ -54,8 +52,6 @@ public class GuiTalker {
 			
 			String regexBrand = "[*]+";
 			String regexModel = "[,]+";
-			
-			
 			
 			while ((line = reader.readLine()) != null) {
 				String[] lineModels = null;
@@ -113,12 +109,11 @@ public class GuiTalker {
 	public void sendCalcData(String urlInput) {
 		try {
 			String connectURL = urlToServer + urlToCalc + urlInput;
-			//URL urlpath = getSerlvetConnection(connectURL);
-			URL urlpath = new URL(connectURL);
+			System.out.println(connectURL);
+			URL urlpath = getSerlvetConnection(connectURL);
 			BufferedReader reader = new BufferedReader(new InputStreamReader(urlpath.openStream()));
-			
 			String line;
-	
+			
 			while ((line = reader.readLine()) != null) {
 				System.out.println(line);
 			}
@@ -128,25 +123,6 @@ public class GuiTalker {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	/*public void random() {
-		try {
-		    String url = "http://localhost:8888/guiAppPopulateServlet";
-//		    String url= "http://www.google.com.au";
-		    JEditorPane editorPane = new JEditorPane(url);
-		    editorPane.setEditable(false);
-
-		    JFrame frame = new JFrame();
-		    frame.getContentPane().add(editorPane, BorderLayout.CENTER);
-		    frame.setSize(400, 400);
-		    frame.setVisible(true);
-		} catch (IOException e) {
-		}
-	}*/
-	
-	
-	
 	
 //	public  void getServletConnection() throws IOException {
 //
