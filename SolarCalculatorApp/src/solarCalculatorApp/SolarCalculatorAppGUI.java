@@ -467,7 +467,12 @@ public class SolarCalculatorAppGUI extends javax.swing.JFrame {
     	sendToServerValues += "numPanel=" + jTextFieldNumPanels.getText() + "&";
     	sendToServerValues += "postcode=" + jTextFieldPostcode.getText() + "&";
     	sendToServerValues += "invNum=" + jComboBoxInverterModel.getSelectedItem().toString() + "&";
-    	sendToServerValues += "energyComp=" + jComboBoxEnergyProvider.getSelectedItem().toString() + "&";
+    	String eneryProv = jComboBoxEnergyProvider.getSelectedItem().toString();
+    	if (eneryProv.contains(" ")) {
+    		sendToServerValues += "energyComp=" + eneryProv.replace(" ", "%20") + "&";
+    	} else {
+    		sendToServerValues += "energyComp=" + eneryProv + "&";
+    	}
     	sendToServerValues += "dailyUsage=" + jTextFieldDailyUsage.getText() + "&";
     	sendToServerValues += "tilt=" + jTextFieldTilt.getText() + "&";
     	sendToServerValues += "orientation=" + jTextFieldOrientation.getText() + "&";

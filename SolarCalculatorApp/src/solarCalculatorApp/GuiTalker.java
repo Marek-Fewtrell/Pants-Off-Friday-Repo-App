@@ -55,42 +55,41 @@ public class GuiTalker {
 			
 			while ((line = reader.readLine()) != null) {
 				String[] lineModels = null;
-				if (line.toString().contains("INVERTERBRAND")) {
+				if (line.toString().contains("INVERTERBRAND")) {//Checks for the correct line of results
 					line = line.replace("INVERTERBRAND", "");
-					String[] lineBrands = line.split(regexBrand);
+					String[] lineBrands = line.split(regexBrand);//Splits each brand and model combo up
 					for (int i=0 ; i<lineBrands.length ; i++) {
-						lineModels = lineBrands[i].toString().split(regexModel);
+						lineModels = lineBrands[i].toString().split(regexModel);//Splits each model of brand up
 						ArrayList<String> temp = new ArrayList<String>();
 						inverterBrand.add(lineModels[1]);
 						for (int count=2 ; count<lineModels.length ; count++) {
-							temp.add(lineModels[count].toString());
+							temp.add(lineModels[count].toString()); // adds the brand with all models for it
 						}
 						inverterBrandModels.put(lineModels[1], temp);
 					}
-				} else if (line.toString().contains("PANELBRAND")) {
+				} else if (line.toString().contains("PANELBRAND")) {//Checks for the correct line of results
 					line = line.replace("PANELBRAND", "");
-					String[] lineBrands = line.split(regexBrand);
+					String[] lineBrands = line.split(regexBrand);//Splits each brand and model combo up
 					for (int i=0 ; i<lineBrands.length ; i++) {
-						lineModels = lineBrands[i].toString().split(regexModel);
+						lineModels = lineBrands[i].toString().split(regexModel);//Splits each model of brand up
 						ArrayList<String> temp = new ArrayList<String>();
 						panelBrand.add(lineModels[1]);
 						for (int count=2 ; count<lineModels.length ; count++) {
-							temp.add(lineModels[count].toString());
+							temp.add(lineModels[count].toString());// adds the brand with all models for it
 						}
 						panelBrandModels.put(lineModels[1], temp);
 					}
-				} else if (line.toString().contains("ENERGY")) {
+				} else if (line.toString().contains("ENERGY")) {//Checks for the correct line of results
 					line = line.replace("ENERGY", "");
-					String[] energy = line.split("[,]+");
+					String[] energy = line.split("[,]+"); //Splits each company up
 					for (int i=1 ; i<energy.length ; i++) {
-						energyProv.add(energy[i]);
+						energyProv.add(energy[i]); // adds the company
 					}
 				}
 				
 			}
 			
 			dataOut.put("Inverter Brand", inverterBrand);
-//			dataOut.put("Inverter Model", inverterModel);
 			dataOut.put("Panel Brand", panelBrand);
 			dataOut.put("Energy", energyProv);
 			
@@ -112,10 +111,47 @@ public class GuiTalker {
 			System.out.println(connectURL);
 			URL urlpath = getSerlvetConnection(connectURL);
 			BufferedReader reader = new BufferedReader(new InputStreamReader(urlpath.openStream()));
+
 			String line;
-			
+			String regexResultNum = "[,]+";
 			while ((line = reader.readLine()) != null) {
-				System.out.println(line);
+				if (line.toString().contains("yearlyArray,")) {//Checks for correct line of results
+					line = line.replace("yearlyArray", "");
+					String[] lineResultNum = line.split(regexResultNum);//Splits each result up
+					for (int i=1 ; i<lineResultNum.length ; i++) {
+						System.out.println(lineResultNum[i]);//TODO Need to add to some result thing here.
+					}
+				} else if (line.toString().contains("dailyGenResultArray")) {//Checks for correct line of results
+					line = line.replace("dailyGenResultArray,", "");
+					String[] lineResultNum = line.split(regexResultNum);//Splits each result up
+					for (int i=1 ; i<lineResultNum.length ; i++) {
+						System.out.println(lineResultNum[i]);//TODO Need to add to some result thing here.
+					}
+				} else if (line.toString().contains("yearlyGenResultArray")) {//Checks for correct line of results
+					line = line.replace("yearlyGenResultArray,", "");
+					String[] lineResultNum = line.split(regexResultNum);//Splits each result up
+					for (int i=1 ; i<lineResultNum.length ; i++) {
+						System.out.println(lineResultNum[i]);//TODO Need to add to some result thing here.
+					}
+				} else if (line.toString().contains("yearlySavingResultArray")) {//Checks for correct line of results
+					line = line.replace("yearlySavingResultArray,", "");
+					String[] lineResultNum = line.split(regexResultNum);//Splits each result up
+					for (int i=1 ; i<lineResultNum.length ; i++) {
+						System.out.println(lineResultNum[i]);//TODO Need to add to some result thing here.
+					}
+				} else if (line.toString().contains("investReturnResultArray")) {//Checks for correct line of results
+					line = line.replace("investReturnResultArray,", "");
+					String[] lineResultNum = line.split(regexResultNum);//Splits each result up
+					for (int i=1 ; i<lineResultNum.length ; i++) {
+						System.out.println(lineResultNum[i]);//TODO Need to add to some result thing here.
+					}
+				} else if (line.toString().contains("breakEvenArray")) {//Checks for correct line of results
+					line = line.replace("breakEvenArray,", "");
+					String[] energy = line.split("[,]+");//Splits each result up
+					for (int i=0 ; i<energy.length ; i++) {
+						System.out.println(energy[i]);//TODO Need to add to some result thing here.
+					}
+				}
 			}
 			reader.close();
 		} catch (IOException e) {
@@ -123,46 +159,5 @@ public class GuiTalker {
 			e.printStackTrace();
 		}
 	}
-	
-//	public  void getServletConnection() throws IOException {
-//
-//		String responded = "";
-//		URL urlServlet = new URL(urlToServer);
-//		HttpURLConnection con = (HttpURLConnection) urlServlet.openConnection();
-//		con.setDoInput(true);
-//		con.setDoOutput(true);
-//		con.connect();
-//		//con.getResponseMessage();
-//		//responded += con.getResponseCode();
-//		//responded += con.getResponseMessage();
-//		//System.out.println(con.getContent().toString());
-//		/*System.out.println(con.getContentType().toString());
-//		System.out.println(con.getContentLength());
-//		System.out.println(con.getContent().toString());
-//		System.out.println(con.getc);*/
-//		try {
-//InputStream in = con.getInputStream();
-//ObjectInputStream input = new ObjectInputStream(in);
-//String echo;
-//
-//	echo = (String) input.readObject();
-//
-//input.close();
-//in.close();
-//
-//System.out.println(echo);
-//		} catch (ClassNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		if (!responded.isEmpty()) {
-//			System.out.println("Received");
-//			System.out.println(responded);
-//		}
-//		con.disconnect();
-//		System.out.println("Checkpoint 5");
-//		
-//		
-//	}
 	
 }
