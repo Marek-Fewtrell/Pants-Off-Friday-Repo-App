@@ -1,26 +1,19 @@
 package solarCalculatorApp;
 
-import java.awt.BorderLayout;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 
 
 public class GuiTalker {
 
 
 	
-	//private static String urlToServer = "http://pantsofffriday372project.appspot.com/CalculatorServlet";
+	//private static String urlToServer = "http://pantsofffriday372project.appspot.com/";
 	private static String urlToServer = "http://localhost:8888/";
 	private static String urlToPopulate = "guiAppPopulateServlet";
 	private static String urlToCalc = "guiAppCalcServlet";
@@ -34,13 +27,13 @@ public class GuiTalker {
 		return url;
 	}
 	
-	static HashMap<String, ArrayList<String>> dataOut = new HashMap<String, ArrayList<String>>();
+	static HashMap<String, ArrayList<String>> dataListIn = new HashMap<String, ArrayList<String>>();
 	static ArrayList<String> panelBrand = new ArrayList<String>();
 	static ArrayList<String> energyProv = new ArrayList<String>();
 	static ArrayList<String> inverterBrand = new ArrayList<String>();
 	
-	public final static HashMap<String, ArrayList<String>> inverterBrandModels = new HashMap<String, ArrayList<String>>();
-	public final static HashMap<String, ArrayList<String>> panelBrandModels = new HashMap<String, ArrayList<String>>();
+	public static final HashMap<String, ArrayList<String>> inverterBrandModels = new HashMap<String, ArrayList<String>>();
+	public static final HashMap<String, ArrayList<String>> panelBrandModels = new HashMap<String, ArrayList<String>>();
 	
 	//this gets the data to populate the lists.
 	public HashMap<String, ArrayList<String>> getPopData() {
@@ -89,9 +82,9 @@ public class GuiTalker {
 				
 			}
 			
-			dataOut.put("Inverter Brand", inverterBrand);
-			dataOut.put("Panel Brand", panelBrand);
-			dataOut.put("Energy", energyProv);
+			dataListIn.put("Inverter Brand", inverterBrand);
+			dataListIn.put("Panel Brand", panelBrand);
+			dataListIn.put("Energy", energyProv);
 			
 			reader.close();
 		} catch (MalformedURLException e) {
@@ -101,11 +94,20 @@ public class GuiTalker {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return dataOut;
+		return dataListIn;
 	}
 	
+	
+	static HashMap<String, ArrayList<String>> resultIn = new HashMap<String, ArrayList<String>>();
+	static ArrayList<String> yearlyArray = new ArrayList<String>();
+	static ArrayList<String> dailyGenResultArray = new ArrayList<String>();
+	static ArrayList<String> yearlyGenResultArray = new ArrayList<String>();
+	static ArrayList<String> yearlySavingResultArray = new ArrayList<String>();
+	static ArrayList<String> investReturnResultArray = new ArrayList<String>();
+	static ArrayList<String> breakEvenArray = new ArrayList<String>();
+	
 	//this sends and receives the data for calculations.
-	public void sendCalcData(String urlInput) {
+	public  HashMap<String, ArrayList<String>> sendCalcData(String urlInput) {
 		try {
 			String connectURL = urlToServer + urlToCalc + urlInput;
 			System.out.println(connectURL);
@@ -120,44 +122,60 @@ public class GuiTalker {
 					String[] lineResultNum = line.split(regexResultNum);//Splits each result up
 					for (int i=1 ; i<lineResultNum.length ; i++) {
 						System.out.println(lineResultNum[i]);//TODO Need to add to some result thing here.
+						yearlyArray.add(lineResultNum[i]);
 					}
 				} else if (line.toString().contains("dailyGenResultArray")) {//Checks for correct line of results
 					line = line.replace("dailyGenResultArray,", "");
 					String[] lineResultNum = line.split(regexResultNum);//Splits each result up
 					for (int i=1 ; i<lineResultNum.length ; i++) {
 						System.out.println(lineResultNum[i]);//TODO Need to add to some result thing here.
+						dailyGenResultArray.add(lineResultNum[i]);
 					}
 				} else if (line.toString().contains("yearlyGenResultArray")) {//Checks for correct line of results
 					line = line.replace("yearlyGenResultArray,", "");
 					String[] lineResultNum = line.split(regexResultNum);//Splits each result up
 					for (int i=1 ; i<lineResultNum.length ; i++) {
 						System.out.println(lineResultNum[i]);//TODO Need to add to some result thing here.
+						yearlyGenResultArray.add(lineResultNum[i]);
 					}
 				} else if (line.toString().contains("yearlySavingResultArray")) {//Checks for correct line of results
 					line = line.replace("yearlySavingResultArray,", "");
 					String[] lineResultNum = line.split(regexResultNum);//Splits each result up
 					for (int i=1 ; i<lineResultNum.length ; i++) {
 						System.out.println(lineResultNum[i]);//TODO Need to add to some result thing here.
+						yearlySavingResultArray.add(lineResultNum[i]);
 					}
 				} else if (line.toString().contains("investReturnResultArray")) {//Checks for correct line of results
 					line = line.replace("investReturnResultArray,", "");
 					String[] lineResultNum = line.split(regexResultNum);//Splits each result up
 					for (int i=1 ; i<lineResultNum.length ; i++) {
 						System.out.println(lineResultNum[i]);//TODO Need to add to some result thing here.
+						investReturnResultArray.add(lineResultNum[i]);
 					}
 				} else if (line.toString().contains("breakEvenArray")) {//Checks for correct line of results
 					line = line.replace("breakEvenArray,", "");
 					String[] energy = line.split("[,]+");//Splits each result up
 					for (int i=0 ; i<energy.length ; i++) {
 						System.out.println(energy[i]);//TODO Need to add to some result thing here.
+						breakEvenArray.add(energy[i]);
 					}
 				}
 			}
+			
+			resultIn.put("yearlyArray", yearlyArray);
+			resultIn.put("dailyGenResultArray", dailyGenResultArray);
+			resultIn.put("yearlyGenResultArray", yearlyGenResultArray);
+			resultIn.put("yearlySavingResultArray", yearlySavingResultArray);
+			resultIn.put("investReturnResultArray", investReturnResultArray);
+			resultIn.put("breakEvenArray", breakEvenArray);
+			
 			reader.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		return resultIn;
 	}
 	
 }
