@@ -6,8 +6,11 @@ package solarCalculatorApp;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -70,7 +73,8 @@ public class SolarCalculatorAppGUI extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         jTextFieldDailyUsage = new javax.swing.JTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+//        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Select Panel");
 
@@ -174,7 +178,15 @@ public class SolarCalculatorAppGUI extends javax.swing.JFrame {
     	
     	GuiTalker sendStuff = new GuiTalker();
     	
-    	populateList(sendStuff.getPopData());
+    	try {
+    		populateList(sendStuff.getPopData());
+    	} catch (Exception e) {
+    		//custom title, error icon
+			JOptionPane.showMessageDialog(null,
+			    "Sorry couldn't connect to the service. Please restart the application.",
+			    "Connection error",
+			    JOptionPane.ERROR_MESSAGE);
+    	}
         jLabel5.setText("Tilt Angle");
 
         jTextFieldTilt.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -211,7 +223,15 @@ public class SolarCalculatorAppGUI extends javax.swing.JFrame {
         jButtonReport.setText("Generate Report");
         jButtonReport.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButtonReportMouseClicked(evt);
+                try {
+					jButtonReportMouseClicked(evt);
+				} catch (ConnectException e) {
+					//custom title, error icon
+					JOptionPane.showMessageDialog(null,
+					    "Sorry couldn't connect to the service.",
+					    "Connection error",
+					    JOptionPane.ERROR_MESSAGE);
+				}
             }
         });
 
@@ -477,13 +497,14 @@ public class SolarCalculatorAppGUI extends javax.swing.JFrame {
         jTextAreaHelp.setText(defaultHelpString);
     }
     
-    HashMap<String, ArrayList<String>> resultIn;
+    
     
     //Buttons Event Handling
-    private void jButtonReportMouseClicked(java.awt.event.MouseEvent evt) {
+    private void jButtonReportMouseClicked(java.awt.event.MouseEvent evt) throws ConnectException {
         GuiTalker sendStuff = new GuiTalker();
+        HashMap<String, ArrayList<String>> resultIn;
+        HashMap<String, String> selectOptions = new HashMap<String, String>();
         
-    	
     	String sendToServerValues = "?";
     	sendToServerValues += "panelNum=" + jComboBoxPanelModel.getSelectedItem().toString() + "&";
     	sendToServerValues += "numPanel=" + jTextFieldNumPanels.getText() + "&";
@@ -499,17 +520,36 @@ public class SolarCalculatorAppGUI extends javax.swing.JFrame {
     	sendToServerValues += "tilt=" + jTextFieldTilt.getText() + "&";
     	sendToServerValues += "orientation=" + jTextFieldOrientation.getText() + "&";
     	sendToServerValues += "initInstalCost=" + jTextFieldInstallCost.getText();
+    	
+    	selectOptions.put("panelNum", jComboBoxPanelModel.getSelectedItem().toString());
+    	selectOptions.put("panelBrand", jComboBoxPanelBrand.getSelectedItem().toString());
+        selectOptions.put("numPanel", jTextFieldNumPanels.getText());
+        selectOptions.put("postcode", jTextFieldPostcode.getText());
+        selectOptions.put("invNum", jComboBoxInverterModel.getSelectedItem().toString());
+        selectOptions.put("invBrand", jComboBoxInverterBrand.getSelectedItem().toString());
+        selectOptions.put("energyProv", eneryProv);
+        selectOptions.put("dailyUsage", jTextFieldDailyUsage.getText());
+        selectOptions.put("tilt", jTextFieldTilt.getText());
+        selectOptions.put("orientation", jTextFieldOrientation.getText());
+        selectOptions.put("initInstalCost", jTextFieldInstallCost.getText());
+        
+        
     	resultIn = sendStuff.sendCalcData(sendToServerValues);
-        //JDialog sending = new JDialog(this, "Sending to server");
-        //sending.setVisible(true);
-    	
-    	ResultReportGeneration asd = new ResultReportGeneration();
-    	asd.make(resultIn);
-    	asd = null;
-//    	result.setVisible(true);
-    	
-//    	jFrame1 = new ResultWindow(resultIn);
-//        jFrame1.setVisible(true);
+		ResultReportGeneration asd = new ResultReportGeneration();
+		asd.make(resultIn, selectOptions);
+		asd = null;
+    	try {
+    		
+		} catch (Exception e) {
+			// custom title, error icon
+			JOptionPane.showMessageDialog(null,
+					"Sorry couldn't connect to the service. Please try again.",
+					"Connection error", JOptionPane.ERROR_MESSAGE);
+		}
+		// custom title, no icon
+//		JOptionPane.showMessageDialog(this,
+//				"Sorry couldn't connect to the service.", "Connection error",
+//				JOptionPane.PLAIN_MESSAGE);
     }
     
     private void populateList(HashMap<String, ArrayList<String>> data) { 

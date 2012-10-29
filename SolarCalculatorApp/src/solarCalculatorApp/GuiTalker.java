@@ -3,6 +3,7 @@ package solarCalculatorApp;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -10,11 +11,9 @@ import java.util.HashMap;
 
 
 public class GuiTalker {
-
-
 	
-	//private static String urlToServer = "http://pantsofffriday372project.appspot.com/";
-	private static String urlToServer = "http://localhost:8888/";
+	private static String urlToServer = "http://pantsofffriday372project.appspot.com/";
+	//private static String urlToServer = "http://localhost:8888/";
 	private static String urlToPopulate = "guiAppPopulateServlet";
 	private static String urlToCalc = "guiAppCalcServlet";
 	
@@ -22,7 +21,8 @@ public class GuiTalker {
 		
 	}
 	
-	private URL getSerlvetConnection(String connectUrl) throws MalformedURLException {
+	
+	private URL getSerlvetConnection(String connectUrl) throws MalformedURLException, ConnectException {
 		URL url = new URL(connectUrl);
 		return url;
 	}
@@ -36,7 +36,7 @@ public class GuiTalker {
 	public static final HashMap<String, ArrayList<String>> panelBrandModels = new HashMap<String, ArrayList<String>>();
 	
 	//this gets the data to populate the lists.
-	public HashMap<String, ArrayList<String>> getPopData() {
+	public HashMap<String, ArrayList<String>> getPopData() throws ConnectException{
 		try {
 			String connectURL = urlToServer + urlToPopulate;
 			URL urlpath = getSerlvetConnection(connectURL);
@@ -107,11 +107,13 @@ public class GuiTalker {
 	static ArrayList<String> breakEvenArray = new ArrayList<String>();
 	
 	//this sends and receives the data for calculations.
-	public  HashMap<String, ArrayList<String>> sendCalcData(String urlInput) {
-		try {
+	public  HashMap<String, ArrayList<String>> sendCalcData(String urlInput) throws ConnectException {
+		
 			String connectURL = urlToServer + urlToCalc + urlInput;
-			System.out.println(connectURL);
-			URL urlpath = getSerlvetConnection(connectURL);
+			URL urlpath;
+			try {
+				urlpath = getSerlvetConnection(connectURL);
+			
 			BufferedReader reader = new BufferedReader(new InputStreamReader(urlpath.openStream()));
 
 			String line;
@@ -127,28 +129,28 @@ public class GuiTalker {
 				} else if (line.toString().contains("dailyGenResultArray")) {//Checks for correct line of results
 					line = line.replace("dailyGenResultArray,", "");
 					String[] lineResultNum = line.split(regexResultNum);//Splits each result up
-					for (int i=1 ; i<lineResultNum.length ; i++) {
+					for (int i=0 ; i<lineResultNum.length ; i++) {
 						System.out.println(lineResultNum[i]);//TODO Need to add to some result thing here.
 						dailyGenResultArray.add(lineResultNum[i]);
 					}
 				} else if (line.toString().contains("yearlyGenResultArray")) {//Checks for correct line of results
 					line = line.replace("yearlyGenResultArray,", "");
 					String[] lineResultNum = line.split(regexResultNum);//Splits each result up
-					for (int i=1 ; i<lineResultNum.length ; i++) {
+					for (int i=0 ; i<lineResultNum.length ; i++) {
 						System.out.println(lineResultNum[i]);//TODO Need to add to some result thing here.
 						yearlyGenResultArray.add(lineResultNum[i]);
 					}
 				} else if (line.toString().contains("yearlySavingResultArray")) {//Checks for correct line of results
 					line = line.replace("yearlySavingResultArray,", "");
 					String[] lineResultNum = line.split(regexResultNum);//Splits each result up
-					for (int i=1 ; i<lineResultNum.length ; i++) {
+					for (int i=0 ; i<lineResultNum.length ; i++) {
 						System.out.println(lineResultNum[i]);//TODO Need to add to some result thing here.
 						yearlySavingResultArray.add(lineResultNum[i]);
 					}
 				} else if (line.toString().contains("investReturnResultArray")) {//Checks for correct line of results
 					line = line.replace("investReturnResultArray,", "");
 					String[] lineResultNum = line.split(regexResultNum);//Splits each result up
-					for (int i=1 ; i<lineResultNum.length ; i++) {
+					for (int i=0 ; i<lineResultNum.length ; i++) {
 						System.out.println(lineResultNum[i]);//TODO Need to add to some result thing here.
 						investReturnResultArray.add(lineResultNum[i]);
 					}
@@ -170,12 +172,14 @@ public class GuiTalker {
 			resultIn.put("breakEvenArray", breakEvenArray);
 			
 			reader.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		return resultIn;
+		
 	}
-	
 }
